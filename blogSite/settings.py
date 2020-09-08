@@ -25,7 +25,9 @@ SECRET_KEY = '$q31kme4ldu=@3y^!*&sk*txkjh8+e+r$3x_m^-9!ezzqyv9n-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'todapsic.pythonanywhere.com'
+]
 
 
 # Application definition

@@ -10,7 +10,7 @@ class Profile(models.Model):
         return f'Profile of {self.user.username}'
     
     def save(self ,*args , **kwargs):
-        super(*args , **kwargs).save()
+        super().save(*args , **kwargs)
 
         img = Image.open(self.image.path)
 

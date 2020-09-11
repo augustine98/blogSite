@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Dosis&display=swap');
+
+body{
+    margin: 0;
+    background-color: #17141d;
+    color: aliceblue;
+    font-family: 'Dosis', sans-serif;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+.card-stack{
+    display: flex;
+    flex-direction: column;
+    padding: 3rem;
+}
+
+.card{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width:1000px;
+    height: 300px;
+    min-height: 200px;
+    padding: 1.5rem;
+    background-color: #17141d;
+    border-radius: 2em;
+    box-shadow: 0 1rem  3rem #000000;
+
+    transition: .2s;
+}
+
+.card:hover{
+    transform: translateX(1rem);
+}
+.card:hover ~ .card{
+    transform: translateY(120px);
+}
+
+.card:not(:first-child){
+    margin-top: -120px;
+}
+
+.card-info-section{
+    display: flex;
+    flex-direction: row;
+}
+
+.card-author-avatar{
+    width:75px;
+    height:75px;
+}
+
+.card-metadata-author{
+    display: flex;
+    flex-direction: row;
+    padding: 5px;
+}
+
+.card-author-name{
+    margin: 5px;
+    color: #e52e71;
+}
+.card-author-name:hover {
+    color:#ff8a00;
+    
+}
+.card-date-posted{
+    margin: 5px;
+}
+.card-header{
+    margin: 5px;
+}
+
+.card-header h1{
+    margin: 0;
+}
+.card-header h1:hover{
+    background: linear-gradient(90deg,#ff8a00,#e52e71);
+    text-shadow: none;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    
+}

@@ -17,6 +17,40 @@ def home(request):
         'posts': Post.objects.all()
     }
     return render(request , 'blog/home.html', context = context)
+def vote(request):
+    post_id = int(request.POST.get('id'))
+    vote_type = request.POST.get('type')
+    vote_action = request.POST.get('action')
+
+    post = get_object_or_404(Post , pk = post_id)
+    
+    thisUserUpvote = post.upvotes.filter(id = request.user.id).count()
+    thisUserDownvote = post.downvotes.filter(id = request.user.id).count()
+
+    if(vote_action == 'vote'):
+        if(thisUserUpvote==0 and thisUserDownvote == 0):
+            if(vote_type == 'up'):
+                post.upvotes.add(request.user)
+            elif(vote_type == 'down'):
+                post.downvotes.add(request.user)
+            else:
+                return HttpResponse("Error, Unknown vote type")
+        else:
+            return HttpResponse("Already Voted")
+    elif (vote_action == 'recall'):
+        if(vote_type=='up' and thisUserUpvote == 1):
+            post.upvotes.remove(request.user)
+        elif(vote_type == 'down' and thisUserDownvote == 1):
+            post.downvotes.remove(request.user)
+        else :
+            return HttpResponse("Error, Unknown vote type or no  vote to recall")
+    else :
+        return HttpResponse("Error, Bad Action")
+    
+    return HttpResponse( post.upvotes.count() - post.downvotes.count())
+            
+
+
 
 
 class PostListView(ListView):

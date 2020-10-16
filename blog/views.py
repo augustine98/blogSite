@@ -66,8 +66,3 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author;
-
-
-
-def about(request):
-    return render(request , 'blog/about.html')

@@ -26,7 +26,8 @@ SECRET_KEY = '$q31kme4ldu=@3y^!*&sk*txkjh8+e+r$3x_m^-9!ezzqyv9n-'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'todapsic.pythonanywhere.com'
+    'todapsic.pythonanywhere.com',
+    '127.0.0.1'
 ]
 
 

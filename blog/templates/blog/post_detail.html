@@ -1,20 +1,113 @@
 {% extends "blog/base.html" %}
 {% block content %}
-    <article class="media content-section">
-        <img src="{{object.author.profile.image.url}}" class="rounded-circle article-img">
-        <div class="media-body">
-        <div class="article-metadata">
-            <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
-            <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
-            <div class="mb-2 mt-2">
-            {% if object.author == user %}
-                <a class ="btn-sm btn-outline-secondary mt-1 mb-1" href="{% url 'post-update' object.id %}">Modify</a>
-                <a class ="btn-sm btn-outline-danger mt-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>
-            {% endif %}
-            </div>
-        </div>
-        <h2 class="article-title">{{ object.title }}</h2>
-        <p class="article-content">{{ object.content }}</p>
-        </div>
-        </article>
+<article class="media content-section">
+  <img src="{{object.author.profile.image.url}}" class="rounded-circle article-img">
+  <div class="media-body">
+    <div>
+      <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+      <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+      <div class="mb-2 mt-2">
+        {% if object.author == user %}
+        <a class="btn-sm btn-outline-secondary mt-1 mb-1" href="{% url 'post-update' object.id %}">Modify</a>
+        <a class="btn-sm btn-outline-danger mt-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>
+        {% endif %}
+      </div>
+    </div>
+    <h2 class="article-title">{{ object.title }}</h2>
+    <p class="article-content">{{ object.content }}</p>
+
+  </div>
+  <div class="vote-buttons">
+    {% if object.upvotes.filter(id = object.author.id).count() == 1 %}
+    <button class="vote-up btn btn-sm btn-danger">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px">
+        <path d="M0 0h24v24H0V0z" fill="none" />
+        <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" /></svg>
+    </button>
+    {% else %}
+    <button class="vote-up btn btn-sm btn-secondary">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px">
+        <path d="M0 0h24v24H0V0z" fill="none" />
+        <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" /></svg>
+    </button>
+    {% endif %}
+
+
+    <div class='vote-tally' style="text-align: center;">
+      {{post.score}}
+    </div>
+
+    {% if object.thiUserDownVote == 1 %}
+    <button class="vote-down btn btn-sm btn-primary">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px">
+        <path d="M0 0h24v24H0V0z" fill="none" />
+        <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" /></svg>
+    </button>
+    {% else %}
+    <button class="vote-down btn btn-sm btn-secondary">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px">
+        <path d="M0 0h24v24H0V0z" fill="none" />
+        <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" /></svg>
+    </button>
+    {% endif %}
+
+  </div>
+</article>
 {% endblock content %}
+{% block base_scripts %}
+<script type="text/javascript">
+  $(document).ready(function () {
+
+    function isInt(value) {
+      return !isNaN(value) &&
+        parseInt(Number(value)) == value &&
+        !isNaN(parseInt(value, 10));
+    }
+    //Up Vote button cases
+    $('div.vote-buttons button.vote-up').click(function () {
+      let vote_type = 'up';
+      if ($(this).hasClass('btn-danger')) {
+        let vote_action = 'recall-vote';
+        $.post('/post/{{object.id}}/vote/', { type: vote_type, action: vote_action }, function (response) {
+          if (isInt(response)) {
+            $('div.vote-up').removeClass('btn-danger').addClass('btn-secondary');
+            $('div.vote-tally').html("Messi");
+          }
+        });
+      } else {
+
+        let vote_action = 'vote';
+        $.post('/post/{{object.id}}/vote/', { type: vote_type, action: vote_action }, function (response) {
+          if (isInt(response)) {
+            $('div.vote-up').removeClass('btn-secondary').addClass('btn-danger');
+            $('div.vote-tally').html(response);
+          }
+        });
+      }
+    });
+    //Down Vote button cases
+    $('div.vote-buttons button.vote-down').click(function () {
+      let vote_type = 'down';
+      if ($(this).hasClass('btn-primary')) {
+        let vote_action = 'recall-vote';
+        $.post('/post/{{object.id}}/vote/', { type: vote_type, action: vote_action }, function (response) {
+          if (isInt(response)) {
+            $('div.vote-up').removeClass('btn-primary').addClass('btn-secondary');
+            $('div.vote-tally').html(response);
+          }
+        });
+      }
+      else {
+        let vote_action = 'vote';
+        $.post('/post/{{object.id}}/vote/', { type: vote_type, action: vote_action }, function (response) {
+          if (isInt(response)) {
+            $('div.vote-up').removeClass('btn-secondary').addClass('btn-primary');
+            $('div.vote-tally').html(response);
+          }
+        });
+      }
+    });
+
+  });
+</script>
+{% endblock base_scripts %}

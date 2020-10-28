@@ -9,6 +9,8 @@ from django.views.generic import (
     UpdateView,
     DeleteView)
 from .models import Post
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 
@@ -17,12 +19,13 @@ def home(request):
         'posts': Post.objects.all()
     }
     return render(request , 'blog/home.html', context = context)
-def vote(request):
-    post_id = int(request.POST.get('id'))
+
+@csrf_exempt
+def vote(request, pk):
     vote_type = request.POST.get('type')
     vote_action = request.POST.get('action')
 
-    post = get_object_or_404(Post , pk = post_id)
+    post = get_object_or_404(Post , pk = pk) 
     
     thisUserUpvote = post.upvotes.filter(id = request.user.id).count()
     thisUserDownvote = post.downvotes.filter(id = request.user.id).count()
@@ -46,8 +49,11 @@ def vote(request):
             return HttpResponse("Error, Unknown vote type or no  vote to recall")
     else :
         return HttpResponse("Error, Bad Action")
-    
-    return HttpResponse( post.upvotes.count() - post.downvotes.count())
+
+    thisUserUpvote = post.upvotes.filter(id = request.user.id).count()
+    thisUserDownvote = post.downvotes.filter(id = request.user.id).count()
+    post.score = thisUserUpvote - thisUserDownvote
+    return HttpResponse(post.score)
             
 
 

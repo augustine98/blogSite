@@ -27,11 +27,11 @@ def vote(request, pk):
 
     post = get_object_or_404(Post , pk = pk) 
     
-    thisUserUpvote = post.upvotes.filter(id = request.user.id).count()
-    thisUserDownvote = post.downvotes.filter(id = request.user.id).count()
+    thisUserUpVote = post.upvotes.filter(id = request.user.id).count()
+    thisUserDownVote = post.downvotes.filter(id = request.user.id).count()
 
     if(vote_action == 'vote'):
-        if(thisUserUpvote==0 and thisUserDownvote == 0):
+        if(thisUserUpVote==0 and thisUserDownVote == 0):
             if(vote_type == 'up'):
                 post.upvotes.add(request.user)
             elif(vote_type == 'down'):
@@ -40,19 +40,19 @@ def vote(request, pk):
                 return HttpResponse("Error, Unknown vote type")
         else:
             return HttpResponse("Already Voted")
-    elif (vote_action == 'recall'):
-        if(vote_type=='up' and thisUserUpvote == 1):
+    elif (vote_action == 'recall-vote'):
+        if(vote_type=='up' and thisUserUpVote == 1):
             post.upvotes.remove(request.user)
-        elif(vote_type == 'down' and thisUserDownvote == 1):
+        elif(vote_type == 'down' and thisUserDownVote == 1):
             post.downvotes.remove(request.user)
         else :
             return HttpResponse("Error, Unknown vote type or no  vote to recall")
     else :
         return HttpResponse("Error, Bad Action")
 
-    thisUserUpvote = post.upvotes.filter(id = request.user.id).count()
-    thisUserDownvote = post.downvotes.filter(id = request.user.id).count()
-    post.score = thisUserUpvote - thisUserDownvote
+    thisUserUpVote = post.upvotes.filter(id = request.user.id).count()
+    thisUserDownVote = post.downvotes.filter(id = request.user.id).count()
+    post.score = thisUserUpVote - thisUserDownVote
     return HttpResponse(post.score)
             
 
@@ -78,6 +78,17 @@ class UserPostListView(ListView):
 
 class PostDetailView(DetailView):
     model = Post
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        post = get_object_or_404(Post , pk = self.kwargs.get('pk'))
+        user = get_object_or_404(User , pk = self.request.user.id)
+        context['thisUserUpVote'] = post.upvotes.filter(id = user.id).count()
+        context['thisUserDownVote'] = post.downvotes.filter(id = user.id).count()
+        context['postScore'] = context['thisUserUpVote'] - context['thisUserDownVote'] 
+        print(context['thisUserUpVote'] , context['thisUserDownVote'] , context['postScore'])  
+        print(context)
+        return context
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 

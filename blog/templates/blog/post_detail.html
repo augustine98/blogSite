@@ -15,10 +15,9 @@
     </div>
     <h2 class="article-title">{{ object.title }}</h2>
     <p class="article-content">{{ object.content }}</p>
-    <p>{{object.author.id}}</p>
   </div>
   <div class="vote-buttons">
-    {% if object.upvotes == 1 %}
+    {% if thisUserUpVote == 1 %}
     <button class="vote-up btn btn-sm btn-danger">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px">
         <path d="M0 0h24v24H0V0z" fill="none" />
@@ -34,10 +33,10 @@
 
 
     <div class='vote-tally' style="text-align: center;">
-      {{post.score}}
+      {{postScore}}
     </div>
 
-    {% if object.thiUserDownVote == 1 %}
+    {% if thisUserDownVote == 1 %}
     <button class="vote-down btn btn-sm btn-primary">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px">
         <path d="M0 0h24v24H0V0z" fill="none" />
@@ -57,7 +56,6 @@
 {% block base_scripts %}
 <script type="text/javascript">
   $(document).ready(function () {
-
     function isInt(value) {
       return !isNaN(value) &&
         parseInt(Number(value)) == value &&
@@ -70,8 +68,8 @@
         let vote_action = 'recall-vote';
         $.post('/post/{{object.id}}/vote/', { type: vote_type, action: vote_action }, function (response) {
           if (isInt(response)) {
-            $('div.vote-up').removeClass('btn-danger').addClass('btn-secondary');
-            $('div.vote-tally').html("Messi");
+            $('button.vote-up').removeClass('btn-danger').addClass('btn-secondary');
+            $('div.vote-tally').html(response);
           }
         });
       } else {
@@ -79,7 +77,7 @@
         let vote_action = 'vote';
         $.post('/post/{{object.id}}/vote/', { type: vote_type, action: vote_action }, function (response) {
           if (isInt(response)) {
-            $('div.vote-up').removeClass('btn-secondary').addClass('btn-danger');
+            $('button.vote-up').removeClass('btn-secondary').addClass('btn-danger');
             $('div.vote-tally').html(response);
           }
         });
@@ -92,7 +90,7 @@
         let vote_action = 'recall-vote';
         $.post('/post/{{object.id}}/vote/', { type: vote_type, action: vote_action }, function (response) {
           if (isInt(response)) {
-            $('div.vote-up').removeClass('btn-primary').addClass('btn-secondary');
+            $('button.vote-down').removeClass('btn-primary').addClass('btn-secondary');
             $('div.vote-tally').html(response);
           }
         });
@@ -101,7 +99,7 @@
         let vote_action = 'vote';
         $.post('/post/{{object.id}}/vote/', { type: vote_type, action: vote_action }, function (response) {
           if (isInt(response)) {
-            $('div.vote-up').removeClass('btn-secondary').addClass('btn-primary');
+            $('button.vote-down').removeClass('btn-secondary').addClass('btn-primary');
             $('div.vote-tally').html(response);
           }
         });

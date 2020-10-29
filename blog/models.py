@@ -11,7 +11,6 @@ class Post(models.Model):
     author = models.ForeignKey(User , on_delete= models.CASCADE)
     upvotes = models.ManyToManyField(User,blank = True, related_name='post_upvotes')
     downvotes = models.ManyToManyField(User,blank = True, related_name='post_downvotes')
-    score = models.IntegerField(default= 0)
 
     def __str__(self):
         return self.title

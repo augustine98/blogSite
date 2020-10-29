@@ -78,6 +78,7 @@
         $.post('/post/{{object.id}}/vote/', { type: vote_type, action: vote_action }, function (response) {
           if (isInt(response)) {
             $('button.vote-up').removeClass('btn-secondary').addClass('btn-danger');
+            $('button.vote-down').removeClass('btn-primary').addClass('btn-secondary');
             $('div.vote-tally').html(response);
           }
         });
@@ -100,6 +101,7 @@
         $.post('/post/{{object.id}}/vote/', { type: vote_type, action: vote_action }, function (response) {
           if (isInt(response)) {
             $('button.vote-down').removeClass('btn-secondary').addClass('btn-primary');
+            $('button.vote-up').removeClass('btn-danger').addClass('btn-secondary');
             $('div.vote-tally').html(response);
           }
         });

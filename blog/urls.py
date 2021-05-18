@@ -9,5 +9,7 @@ urlpatterns = [
     path('post/<int:pk>/vote/' , views.vote , name = 'post-vote'),
     path('post/<int:pk>/delete/' , views.PostDeleteView.as_view() , name='post-delete'),
     path('user/<str:username>/', views.UserPostListView.as_view() ,name ='user-posts'),
+    path('c/new/' , views.CommunityCreateView.as_view() , name = 'comm-create'),
+    path('c/<int:pk>/', views.CommunityListView.as_view(), name='comm-list'),
 
 ]

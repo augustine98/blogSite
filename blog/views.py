@@ -8,7 +8,7 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView)
-from .models import Post
+from .models import Post, Community
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -76,7 +76,7 @@ class UserPostListView(ListView):
         user = get_object_or_404(User , username = self.kwargs.get('username'))
         return Post.objects.filter(author = user).order_by('-date_posted')
 
-class PostDetailView(DetailView):
+class PostDetailView(LoginRequiredMixin , DetailView):
     model = Post
 
     def get_context_data(self, **kwargs):
@@ -85,7 +85,7 @@ class PostDetailView(DetailView):
         user = get_object_or_404(User , pk = self.request.user.id)
         context['thisUserUpVote'] = post.upvotes.filter(id = user.id).count()
         context['thisUserDownVote'] = post.downvotes.filter(id = user.id).count()
-        context['postScore'] = context['thisUserUpVote'] - context['thisUserDownVote'] 
+        context['postScore'] = post.upvotes.count() - post.downvotes.count()
         print(context['thisUserUpVote'] , context['thisUserDownVote'] , context['postScore'])  
         print(context)
         return context
@@ -93,14 +93,14 @@ class PostDetailView(DetailView):
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     model = Post
-    success_url ='/blog/'
+    success_url ='/'
 
     def test_func(self):
         return self.get_object().author == self.request.user
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['title' , 'content']
+    fields = ['title' , 'content' , 'posted_to']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -117,3 +117,23 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author;
+
+
+class CommunityCreateView(LoginRequiredMixin , CreateView):
+    model = Community
+    fields = ['name' , 'description']
+
+    def form_valid(self , form):
+        # form.instance.members.add(self.request.user)
+        return super().form_valid(form)
+
+class CommunityListView(ListView):
+    model = Post
+    template_name = 'post_list.html' # <app>/<model>_<viewtype>.html
+    context_object_name ='posts'
+    ordering = ['-date_posted']
+    paginate_by = 5
+
+    def get_queryset(self):
+        comm = get_object_or_404(Community , pk = self.kwargs.get('pk'))
+        return Post.objects.filter(posted_to = comm).order_by('-date_posted')

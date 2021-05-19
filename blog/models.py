@@ -5,7 +5,7 @@ from django.urls import reverse
 # Create your models here.
 
 class Community(models.Model):
-    name = models.CharField(max_length = 15)
+    name = models.CharField(primary_key=True, max_length = 15)
     description = models.TextField(max_length=100)
     date_created = models.DateTimeField(default = timezone.now)
     # members = models.ManyToManyField(User , blank = True , related_name='comm_members')
@@ -14,7 +14,7 @@ class Community(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('comm-list',kwargs={'pk' : self.pk})
+        return reverse('comm-list',kwargs={'name' : self.name})
 
 class Post(models.Model):
     title = models.CharField(max_length = 100)
@@ -23,7 +23,7 @@ class Post(models.Model):
     author = models.ForeignKey(User , on_delete= models.CASCADE)
     upvotes = models.ManyToManyField(User, blank = True, related_name='post_upvotes')
     downvotes = models.ManyToManyField(User,blank = True, related_name='post_downvotes')
-    posted_to = models.ManyToManyField(Community , blank = True , related_name='posted_to_community')
+    posted_to = models.ForeignKey(Community , on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title

@@ -129,11 +129,10 @@ class CommunityCreateView(LoginRequiredMixin , CreateView):
 
 class CommunityListView(ListView):
     model = Post
-    template_name = 'post_list.html' # <app>/<model>_<viewtype>.html
-    context_object_name ='posts'
-    ordering = ['-date_posted']
+    template_name = 'post_list.html'
     paginate_by = 5
+    context_object_name = 'posts'
 
     def get_queryset(self):
-        comm = get_object_or_404(Community , pk = self.kwargs.get('pk'))
+        comm = get_object_or_404(Community, name = self.kwargs.get('name'))
         return Post.objects.filter(posted_to = comm).order_by('-date_posted')

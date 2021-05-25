@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Dosis&display=swap');
+
+body{
+    /* background-color: #282a36; */
+    background-color: white;
+    color: aliceblue;
+    font-family: 'Dosis', sans-serif;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+.card-nav {
+    position:absolute;bottom:0;
+}
+ul.card-nav a,ul.card-votes a {
+    padding: 0.5em;
+    border-radius: 1.5em;
+    text-align:center;
+}
+
+.vote-tally{
+    padding: 0.5em;
+    border-radius: 1.5em;
+    text-align:center;
+}
+
+ul.card-nav a:hover , ul.card-votes a:hover{
+    background-color:#6272a4;
+}
+
+.material-icons-outlined{
+    padding: 0.5rem;
+    font-size:16px;
+    margin:auto;
+}
+
+.card-link{
+    padding-right: 0.5rem;
+    margin:auto;
+}
+.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.card-stack{
+    display: flex;
+    flex-direction: column;
+    padding: 3rem;
+}
+
+.card{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width:1000px;
+    height: 300px;
+    min-height: 200px;
+    padding: 1.5rem;
+    background-color: #383A59;
+    border-radius: 2em;
+    box-shadow: 0 1rem  3rem #000000;
+
+    transition: .2s;
+}
+
+.card:hover{
+    transform: translateX(1rem);
+    border-color: #ff79c6;
+    border-style: solid;
+}
+.card:hover ~ .card{
+    transform: translateY(140px);
+}
+.card-votes{
+    display:flex;
+    flex-direction:column;
+    margin-left: auto;
+}
+.card:not(:first-child){
+    margin-top: -120px;
+}
+
+.card-info-section{
+    display: flex;
+    flex-direction: row;
+}
+
+.card-author-avatar{
+    width:75px;
+    height:75px;
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+}
+
+.card-metadata-author{
+    display: flex;
+    flex-direction: row;
+    padding: 5px;
+}
+.card-sub-name{
+    margin: 5px;
+    color: #e52e71;
+    font-weight: bold;
+}
+.card-sub-name:hover {
+    color:#ff8a00;
+    text-decoration: underline !important;
+    
+}
+.card-author-name{
+    margin: 5px;
+    color: #e52e71;
+}
+.card-author-name:hover {
+    color:#ff8a00;
+    
+}
+.card-date-posted{
+    margin: 5px;
+}
+.card-heading{
+    margin: 5px;
+}
+
+.card-heading h1{
+    color: white;
+}
+.card-heading h1:hover{
+    background: linear-gradient(90deg,#ff8a00,#e52e71);
+    text-shadow: none;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    
+}

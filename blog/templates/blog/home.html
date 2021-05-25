@@ -1,21 +1,9 @@
 {% extends "blog/base.html" %}
 {% block content %}
-        {% for post in posts %}
-        <article class="media content-section">
-          <img src="{{post.author.profile.image.url}}" class="rounded-circle article-img">
-          <div class="media-body">
-            <span>
-                <a class = "mr-3" href = "{%url 'comm-list' post.posted_to %}">{{post.posted_to}}</a>
-                <small>Posted by</small> <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
-                <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
-            </span>
-              <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-              <p class="article-content">{{ post.content }}</p>
-            </div>
-            
-          </article>
-        {% endfor %}
+      <div class="card-stack">
 
+        {% include "blog/card.html" %}
+      </div>
         {% if is_paginated %}
           {% if page_obj.has_previous%}
             <a class ="btn btn-outline-info mb-4" href="?page=1">First</a>
@@ -35,3 +23,28 @@
           {% endif %}
         {% endif %}
 {% endblock content %}
+
+{% block banner %}
+<div class="row">
+  <div class="col md-12 content-section">
+    <h3>Trending Communities</h3>
+    <p class='text-muted'>More content will be added soon.
+      <ul class="list-group">
+        <li class="list-group-item list-group-item-light"><a href="{% url 'blog-home' %}">Latest Posts</a></li>
+        <li class="list-group-item list-group-item-light">Announcements</li>
+      </ul>
+    </p>
+  </div>
+</div>  
+<div class="row">
+  <div class="col-md-12 content-section">
+    <h3>Schwifty Blog</h3>
+    <p class='text-muted'>New Features rolling soon.
+      <ul class="list-group">
+        <li class="list-group-item list-group-item-light">Comments for blogs</li>
+        <li class="list-group-item list-group-item-light">Nested comment feature</li>
+      </ul>
+    </p>
+  </div>
+</div>
+{% endblock banner %} 

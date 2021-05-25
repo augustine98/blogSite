@@ -10,11 +10,14 @@ class Community(models.Model):
     date_created = models.DateTimeField(default = timezone.now)
     # members = models.ManyToManyField(User , blank = True , related_name='comm_members')
 
+    class Meta:
+        verbose_name_plural = "Communities"
+
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('comm-list',kwargs={'name' : self.name})
+        return reverse('comm-list',kwargs={'name' : self.name })
 
 class Post(models.Model):
     title = models.CharField(max_length = 100)
@@ -31,5 +34,9 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('post-detail',kwargs={'pk' : self.pk})
     
-
+class Comment(models.Model):
+    body = models.TextField()
+    date_posted = models.DateTimeField(default = timezone.now)
+    post = models.ForeignKey(Post , related_name="comments", on_delete=models.CASCADE)
+    author = models.ForeignKey(User , on_delete= models.CASCADE)
 

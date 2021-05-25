@@ -1,0 +1,43 @@
+{% for post in posts %}
+<article class="media content-section">
+  <img src="{{post.author.profile.image.url}}" class="rounded-circle article-img">
+  <div class="media-body">
+    <span>
+        <a class = "mr-3" href = "{%url 'comm-list' post.posted_to %}">{{post.posted_to}}</a>
+        <small>Posted by</small> <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+        <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+    </span>
+      <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+      <p class="article-content">{{ post.content }}</p>
+    </div>
+
+</article>
+  <!-- <div class="card">
+      <div class="card-info-section">
+          <img class="card-author-avatar rounded-circle" src ="{{post.author.profile.image.url}}">
+          <div>
+              <div class="card-metadata-author">
+                  <a class="card-sub-name" href ="{% url 'comm-list' post.posted_to %}">c/{{post.posted_to}}</a>
+                  <a class="card-author-name" href ="{% url 'user-posts' post.author.username %}">{{post.author}}</a>
+                  <div class="card-date-posted">{{ post.date_posted|date:"F d, Y" }}</div>
+              </div>
+              <a class="card-heading" href="{% url 'post-detail' post.id %}">
+                  <h1>{{post.title}}</h1>
+              </a>
+          </div>
+          <ul class="card-votes">
+              <a class="unselectable"><span class="material-icons-outlined">arrow_upward</span></a>
+              <span class="unselectable vote-tally">42</span>
+              <a class="unselectable"><span class="material-icons-outlined">arrow_downward</span></a>
+          </ul>
+      </div>
+      <p>{{post.content}}</p>
+      <ul class="card-nav">
+          <a class="unselectable"><span class="material-icons-outlined">chat_bubble</span><span class="card-link">Comments</span></a>
+          <a class="unselectable"><span class="material-icons-outlined">military_tech</span><span class="card-link">Award</span></a>
+          <a class="unselectable"><span class="material-icons-outlined">share</span><span class="card-link">Share</span></a>
+          <a class="unselectable"><span class="material-icons-outlined">bookmark_add</span><span class="card-link">Save</span></a>
+          <a class="unselectable"><span class="material-icons-outlined">more_vert</span></a>
+      </ul>
+  </div> -->
+{% endfor %}

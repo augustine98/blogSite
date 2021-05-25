@@ -52,6 +52,32 @@
 
   </div>
 </article>
+<article class="content-section">
+  <h3>Comments</h3>
+  <hr>
+  <small>Comment as </small> {{user}}
+
+  <div class="form-group">
+    <textarea class="form-control" id="commentForm" rows="3"></textarea>
+    <button class="my-2 btn btn-outline-info user-comment" type="submit">Comment</button>
+  </div>
+
+  {% if not object.comments.all %}
+    No comments yet..<br>
+    Be the first to comment
+  {% else %}
+  <div class="list-group comment-section">
+    {% for comment in object.comments.all %}
+    <div class="list-group-item list-group-item-light">
+      <a class="mr-2" href="{% url 'user-posts' comment.author %}">{{ comment.author }}</a>
+      <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+      <div class="article-content">{{ comment.body }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</article>
 {% endblock content %}
 {% block base_scripts %}
 <script type="text/javascript">
@@ -108,6 +134,18 @@
       }
     });
 
+    $('.user-comment').click(function(){
+      let _comment = $('#commentForm').val();
+      $.post('/post/{{object.id}}/comment/' , {comment: _comment} , function(response) {
+        $('#commentForm').val('');
+        let _html ='<div class="list-group-item list-group-item-light">\
+      <a class="mr-2" href="{% url "user-posts" request.user %}">{{ request.user }}</a>\
+      <small class="text-muted">'+ response +'</small>\
+      <div class="article-content">'+_comment+'</div>\
+    </div>';
+    $('.comment-section').append(_html);
+      });
+    });
   });
 </script>
 {% endblock base_scripts %}

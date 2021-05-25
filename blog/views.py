@@ -8,17 +8,9 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView)
-from .models import Post, Community
+from .models import Post, Community, Comment
 from django.views.decorators.csrf import csrf_exempt
 
-
-
-
-def home(request):
-    context = {
-        'posts': Post.objects.all()
-    }
-    return render(request , 'blog/home.html', context = context)
 
 @csrf_exempt
 def vote(request, pk):
@@ -56,12 +48,19 @@ def vote(request, pk):
     return HttpResponse(post.upvotes.count() - post.downvotes.count())
             
 
+@csrf_exempt
+def comment(request ,pk):
+    _comment = request.POST.get('comment')
+    post = get_object_or_404(Post , pk = pk) 
+    user = request.user
+    comm = Comment.objects.create(body = _comment , author = user , post = post)
 
+    return HttpResponse(str(comm.date_posted))
 
 
 class PostListView(ListView):
     model = Post
-    template_name = 'blog/home.html' # <app>/<model>_<viewtype>.html
+    template_name = 'blog/home.html'
     context_object_name ='posts'
     ordering = ['-date_posted']
     paginate_by = 5
@@ -86,8 +85,8 @@ class PostDetailView(LoginRequiredMixin , DetailView):
         context['thisUserUpVote'] = post.upvotes.filter(id = user.id).count()
         context['thisUserDownVote'] = post.downvotes.filter(id = user.id).count()
         context['postScore'] = post.upvotes.count() - post.downvotes.count()
-        print(context['thisUserUpVote'] , context['thisUserDownVote'] , context['postScore'])  
-        print(context)
+        # print(context['thisUserUpVote'] , context['thisUserDownVote'] , context['postScore'])  
+        # print(context)
         return context
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

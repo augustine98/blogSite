@@ -62,11 +62,13 @@
     <button class="my-2 btn btn-outline-info user-comment" type="submit">Comment</button>
   </div>
 
-  {% if not object.comments.all %}
-    No comments yet..<br>
-    Be the first to comment
-  {% else %}
   <div class="list-group comment-section">
+  {% if not object.comments.all %}
+    <div class="no-comment-yet">
+      No comments yet..<br>
+      Be the first to comment
+    </div>
+  {% else %}
     {% for comment in object.comments.all %}
     <div class="list-group-item list-group-item-light">
       <a class="mr-2" href="{% url 'user-posts' comment.author %}">{{ comment.author }}</a>
@@ -74,8 +76,9 @@
       <div class="article-content">{{ comment.body }}</div>
     </div>
     {% endfor %}
-  </div>
   {% endif %}
+  </div>
+
 
 </article>
 {% endblock content %}
@@ -143,6 +146,7 @@
       <small class="text-muted">'+ response +'</small>\
       <div class="article-content">'+_comment+'</div>\
     </div>';
+    $('.no-comment-yet').fadeOut();
     $('.comment-section').append(_html);
       });
     });

@@ -21,6 +21,9 @@ Activate the virtual environment that we have just created<br>
 On Mac/Linux<br>
 `source env/bin/activate`
 
+On Windows<br>
+`venv\Scripts\activate`
+
 Install the required packages into the virtual environment<br>
 `pip install -r requirements.txt`
 

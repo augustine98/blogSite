@@ -140,3 +140,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('DB_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('DB_PASS')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

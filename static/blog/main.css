@@ -1,0 +1,44 @@
+
+  body{
+    margin-top: 5rem;
+
+  }
+  h1 , h2, h3{
+    color: darkslategray;
+  }
+  .content-section {
+    background: white;
+    padding: 10px 20px;
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+    margin-bottom: 20px;
+  }
+  
+  small{
+    color: darkgray;
+  }
+  .article-title {
+    color: #444444;
+  }
+  
+  p.article-content{
+    font-size: 24px;
+    color: darkslategray;
+  }
+
+  
+  .article-content {
+    white-space: pre-line;
+  }
+  
+  .article-img {
+    height: 50px;
+    width: 50px;
+    margin-right: 16px;
+  }
+  
+  .article-metadata {
+    padding-bottom: 1px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #e3e3e3
+  }

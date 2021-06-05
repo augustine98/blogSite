@@ -19,34 +19,23 @@
   <div class="vote-buttons">
     {% if thisUserUpVote == 1 %}
     <button class="vote-up btn btn-sm btn-danger">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px">
-        <path d="M0 0h24v24H0V0z" fill="none" />
-        <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" /></svg>
+      <i class="bi bi-arrow-up"></i>
     </button>
     {% else %}
     <button class="vote-up btn btn-sm btn-secondary">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px">
-        <path d="M0 0h24v24H0V0z" fill="none" />
-        <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" /></svg>
+      <i class="bi bi-arrow-up"></i>
     </button>
     {% endif %}
-
-
     <div class='vote-tally' style="text-align: center;">
       {{postScore}}
     </div>
-
     {% if thisUserDownVote == 1 %}
     <button class="vote-down btn btn-sm btn-primary">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px">
-        <path d="M0 0h24v24H0V0z" fill="none" />
-        <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" /></svg>
+      <i class="bi bi-arrow-down"></i>
     </button>
     {% else %}
     <button class="vote-down btn btn-sm btn-secondary">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px">
-        <path d="M0 0h24v24H0V0z" fill="none" />
-        <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" /></svg>
+      <i class="bi bi-arrow-down"></i>
     </button>
     {% endif %}
 
@@ -63,20 +52,30 @@
   </div>
 
   <div class="list-group comment-section">
-  {% if not object.comments.all %}
+    {% if not object.comments.all %}
     <div class="no-comment-yet">
       No comments yet..<br>
       Be the first to comment
     </div>
-  {% else %}
-    {% for comment in object.comments.all %}
-    <div class="list-group-item list-group-item-light">
-      <a class="mr-2" href="{% url 'user-posts' comment.author %}">{{ comment.author }}</a>
-      <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
-      <div class="article-content">{{ comment.body }}</div>
+    {% else %}
+    {% load mptt_tags %}
+    {% recursetree comments %}
+    <div id="{{node.id}}" class="list-group-item list-group-item-light my-2">
+      <a class="mr-2" href="{% url 'user-posts' node.author %}">{{ node.author }}</a>
+      <small class="text-muted">{{ node.date_posted|date:"F d, Y" }}</small>
+      <div class="article-content">{{ node.body }}</div>
+      <div class="mt-1 hidden" id="commentForm{{node.id}}">
+      </div>
+      <button class="btn btn-outline-primary" id="replyButton{{node.id}}"
+        onclick="toggleReplyBox({{node.id}})">Reply</button>
+      <div class="list-group" id="children{{node.id}}">
+        {% if not node.is_leaf_node %}
+          {{children}}
+        {% endif %}
+      </div>
     </div>
-    {% endfor %}
-  {% endif %}
+    {% endrecursetree %}
+    {% endif %}
   </div>
 
 
@@ -84,6 +83,63 @@
 {% endblock content %}
 {% block base_scripts %}
 <script type="text/javascript">
+
+  //Create Reply Form
+  function toggleReplyBox(id) {
+    let _html = '<small>Comment as </small> {{user}}\
+        <div class="form-group">\
+          <textarea class="form-control" id="commentTextBox'+ id.toString() + '" rows="3"></textarea>\
+          <button class="mt-1 btn btn-outline-info user-comment" onclick = "commentReply('+ id.toString() + ')">Comment</button>\
+        </div>';
+    let _parent = document.getElementById("commentForm" + id.toString());
+    let _button = document.getElementById("replyButton" + id.toString());
+    if (_parent.classList.contains("hidden")) {
+      _parent.innerHTML = _html;
+      _parent.classList.remove("hidden");
+      _button.innerHTML = "Hide";
+    }
+    else {
+      _parent.innerHTML = '';
+      _parent.classList.add("hidden");
+      _button.innerHTML = "Reply";
+    }
+  }
+
+  function commentReply(id) {
+    console.log(id);
+    let _comment = $('#commentTextBox' + id.toString()).val();
+    $.post('/post/{{object.id}}/comment/', { comment: _comment, parent_id: id }, function (response) {
+      let _html = '<div id = ' + response['id'] + ' class="list-group-item list-group-item-light my-2">\
+      <a class="mr-2" href="{% url "user-posts" request.user %}">{{ request.user }}</a>\
+      <small class="text-muted">' + response['date_posted'] + '</small>\
+      <div class="article-content">'+ _comment + '</div>\
+      <div class="mt-1 hidden" id = "commentForm'+ response['id'] + '">\
+      </div>\
+      <button class="btn btn-outline-primary" id = "replyButton'+ response['id'] + '" onclick="toggleReplyBox(' + response['id'] + ')" >Reply</button>\
+      <div class="list-group" id="children'+ response['id'] +'">\
+      </div>\
+    </div>';
+
+      let _parent = document.getElementById("commentForm" + id.toString());
+      let _button = document.getElementById("replyButton" + id.toString());
+      if (_parent.classList.contains("hidden")) {
+        _parent.innerHTML = _html;
+        _parent.classList.remove("hidden");
+        _button.innerHTML = "Hide";
+      }
+      else {
+        _parent.innerHTML = '';
+        _parent.classList.add("hidden");
+        _button.innerHTML = "Reply";
+      }
+      $('#children' + id.toString()).append(_html);
+      console.log('#children' + id.toString());
+
+
+    });
+
+  }
+
   $(document).ready(function () {
     function isInt(value) {
       return !isNaN(value) &&
@@ -137,19 +193,25 @@
       }
     });
 
-    $('.user-comment').click(function(){
+    $('.user-comment').click(function () {
       let _comment = $('#commentForm').val();
-      $.post('/post/{{object.id}}/comment/' , {comment: _comment} , function(response) {
+      $.post('/post/{{object.id}}/comment/', { comment: _comment }, function (response) {
         $('#commentForm').val('');
-        let _html ='<div class="list-group-item list-group-item-light">\
+        let _html = '<div id = ' + response['id'] + ' class="list-group-item list-group-item-light my-2">\
       <a class="mr-2" href="{% url "user-posts" request.user %}">{{ request.user }}</a>\
-      <small class="text-muted">'+ response +'</small>\
-      <div class="article-content">'+_comment+'</div>\
+      <small class="text-muted">' + response['date_posted'] + '</small>\
+      <div class="article-content">'+ _comment + '</div>\
+      <div class="mt-1 hidden" id = "commentForm'+ response['id'] + '">\
+      </div>\
+      <button class="btn btn-outline-primary" id = "replyButton'+ response['id'] + '" onclick="toggleReplyBox(' + response['id'] + ')" >Reply</button>\
+      <div class="list-group" id="children'+ response['id'] +'">\
+      </div>\
     </div>';
-    $('.no-comment-yet').fadeOut();
-    $('.comment-section').append(_html);
+        $('.no-comment-yet').fadeOut();
+        $('.comment-section').append(_html);
       });
     });
+
   });
 </script>
 {% endblock base_scripts %}

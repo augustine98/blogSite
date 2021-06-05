@@ -42,3 +42,9 @@
     margin-bottom: 4px;
     border-bottom: 1px solid #e3e3e3
   }
+
+  .list-group-item{
+    /* border: none !important; */
+    border: solid #2196F3  !important;
+    border-width: 0 0 0 4px !important;
+  }
